@@ -7,6 +7,7 @@
 - **作者**：B站@吃素的佩奇
 - **开源主页**：https://github.com/duoluoyuji/Aion2-Steam-CN
 - **声明**：完全免费开源分享，仅供交流学习，严禁任何倒卖牟利！
+![Uploading image.png…]()
 
 ---
 
