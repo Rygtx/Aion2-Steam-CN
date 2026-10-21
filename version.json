@@ -1,7 +1,7 @@
-﻿{
-  "latest_version": "1.2.1",
-  "release_date": "2026-10-14",
-  "title": "v1.2.1 (10月14日大更新适配版)",
-  "announcement": "【v1.2.1 紧急更新】适配10月14日官方大更新，修复全外观词条与还原英文问号Bug！",
+{
+  "latest_version": "1.3.0",
+  "release_date": "2026-10-21",
+  "title": "v1.3.0 (10月21日更新适配版)",
+  "announcement": "【v1.3.0 更新】适配10月21日官方游戏更新，优化权限处理与还原逻辑！",
   "download_url": "https://github.com/duoluoyuji/Aion2-Steam-CN/releases/latest"
 }
