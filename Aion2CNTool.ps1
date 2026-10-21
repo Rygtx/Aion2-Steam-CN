@@ -23,7 +23,7 @@ if ($Lang -eq 'zh-TW' -or $Lang -eq 'tw' -or $Lang -eq 'cht') {
     $ActiveSourceDir = $ZhTwDir
     $LangName = '繁体中文'
 }
-$CurrentVersion = '1.2.0'
+$CurrentVersion = '1.3.0'
 # 3393110 为 Steam 正式服 AppID，4972320 为 Steam Playtest 测试服 AppID
 $AppIds         = @('3393110', '4972320')
 $RemoteVersionUrl   = 'https://raw.githubusercontent.com/duoluoyuji/Aion2-Steam-CN/main/version.json'
@@ -554,6 +554,24 @@ function Show-Disclaimer {
 # ==================== 主流程 ====================
 Show-Banner
 
+
+# ==================== 安全文件操作（防只读属性与文件锁） ====================
+function Safe-CopyFile($src, $dst) {
+    if (Test-Path $dst) {
+        Set-ItemProperty -Path $dst -Name IsReadOnly -Value $false -ErrorAction SilentlyContinue
+    }
+    Copy-Item $src $dst -Force
+}
+
+function Safe-RemoveDirectory($dir) {
+    if (Test-Path $dir) {
+        Get-ChildItem -Path $dir -Recurse -Force -ErrorAction SilentlyContinue | ForEach-Object {
+            Set-ItemProperty -Path $_.FullName -Name IsReadOnly -Value $false -ErrorAction SilentlyContinue
+        }
+        Remove-Item $dir -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
+
 if ($Install) {
     $res = Show-Disclaimer
     if ($res -ne 'OK') {
@@ -607,7 +625,7 @@ if ($Install) {
 
         Write-Host "[3/4] 正在释放中文数据表 (L10NString.dat)..." -ForegroundColor Cyan
         New-Item -ItemType Directory -Path $enUsL10nDir -Force | Out-Null
-        Copy-Item (Join-Path $ActiveSourceDir "L10NString.dat") (Join-Path $enUsL10nDir "L10NString.dat") -Force
+        Safe-CopyFile (Join-Path $ActiveSourceDir "L10NString.dat") (Join-Path $enUsL10nDir "L10NString.dat")
 
         Write-Host "[4/4] 正在注入虚幻5回退机制 Stub..." -ForegroundColor Cyan
         $sigFiles = @(
@@ -624,7 +642,7 @@ if ($Install) {
                 }
             }
         }
-        Copy-Item (Join-Path $ActiveSourceDir "pakchunk502000-Windows_0_P.pak") (Join-Path $enUsPaksDir "pakchunk502000-Windows_0_P.pak") -Force
+        Safe-CopyFile (Join-Path $ActiveSourceDir "pakchunk502000-Windows_0_P.pak") (Join-Path $enUsPaksDir "pakchunk502000-Windows_0_P.pak")
         Write-Host "-> 该目录汉化部署完成！" -ForegroundColor Green
     }
 
@@ -669,7 +687,7 @@ elseif ($Restore) {
         Write-Host "[2/3] 清理汉化数据表..." -ForegroundColor Cyan
         $l10nRoot = Join-Path $gameRoot "Aion2\Content\L10N"
         if (Test-Path $l10nRoot) {
-            Remove-Item $l10nRoot -Recurse -Force -ErrorAction SilentlyContinue
+            Safe-RemoveDirectory $l10nRoot
         }
 
         Write-Host "[3/3] 还原官方原版英文语言包..." -ForegroundColor Cyan
