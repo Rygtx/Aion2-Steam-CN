@@ -13,7 +13,7 @@ Add-Type -AssemblyName System.Drawing
 $ToolDir        = if ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
 $ZhDir          = Join-Path $ToolDir 'zh'
 $ZhTwDir        = Join-Path $ToolDir 'zh-TW'
-$CurrentVersion = '1.2.0'
+$CurrentVersion = '1.3.1'
 $AppIds         = @('3393110', '4972320')
 $RemoteVersionUrl   = 'https://raw.githubusercontent.com/duoluoyuji/Aion2-Steam-CN/main/version.json'
 $FallbackVersionUrl = 'https://ghp.ci/https://raw.githubusercontent.com/duoluoyuji/Aion2-Steam-CN/main/version.json'

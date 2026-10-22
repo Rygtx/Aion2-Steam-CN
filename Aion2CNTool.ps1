@@ -23,7 +23,7 @@ if ($Lang -eq 'zh-TW' -or $Lang -eq 'tw' -or $Lang -eq 'cht') {
     $ActiveSourceDir = $ZhTwDir
     $LangName = '繁体中文'
 }
-$CurrentVersion = '1.3.0'
+$CurrentVersion = '1.3.1'
 # 3393110 为 Steam 正式服 AppID，4972320 为 Steam Playtest 测试服 AppID
 $AppIds         = @('3393110', '4972320')
 $RemoteVersionUrl   = 'https://raw.githubusercontent.com/duoluoyuji/Aion2-Steam-CN/main/version.json'
