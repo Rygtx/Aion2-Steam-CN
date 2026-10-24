@@ -55,6 +55,9 @@ namespace Aion2CN {
         private string toolDir;
         private string zhDir;
         private string zhTwDir;
+        // 设计尺寸（96 DPI 基准），高分屏缩放时复用，避免两处硬编码失联
+        private const int DesignW = 760;
+        private const int DesignH = 725;
         private string currentVersion = "1.3.1";
         private string[] appIds = new string[] { "3393110", "4972320" };
 
@@ -69,7 +72,7 @@ namespace Aion2CN {
 
         private void InitializeComponent() {
             this.Text = "永恒之塔2 (AION 2) 国际服简繁一键汉化 v" + currentVersion + " - B站@吃素的佩奇";
-            this.Size = new Size(760, 725);
+            this.Size = new Size(DesignW, DesignH);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -279,6 +282,26 @@ namespace Aion2CN {
                 AppendLog("==========================================================");
                 RunScan();
             };
+
+            // 高分屏适配：进程已声明系统 DPI 感知（见 app.manifest），字体随 DPI 自动缩放，
+            // 控件矩形与窗口在此按同一比例统一放大（AutoScaleMode 对纯代码窗体不可靠）。
+            // 注意：用桌面 DC 读 DPI，不提前创建窗口句柄，否则 CenterScreen 会按缩放前尺寸计算导致窗口偏移。
+            try {
+                float dpi;
+                using (Graphics g = Graphics.FromHwnd(IntPtr.Zero)) {
+                    dpi = g.DpiX / 96f;
+                }
+                if (dpi > 1f) {
+                    this.Scale(new SizeF(dpi, dpi));
+                    // Scale 对顶层窗体按客户区缩放，此处覆盖为 设计尺寸×DPI 的外框精确值，并限制不超出屏幕工作区
+                    Rectangle wa = Screen.PrimaryScreen.WorkingArea;
+                    this.Size = new Size(
+                        Math.Min((int)Math.Round(DesignW * dpi), wa.Width),
+                        Math.Min((int)Math.Round(DesignH * dpi), wa.Height));
+                }
+            } catch (Exception ex) {
+                AppendLog("【警告】DPI 缩放失败，界面可能偏小: " + ex.Message);
+            }
         }
 
         private void AppendLog(string msg) {
